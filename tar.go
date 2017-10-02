@@ -12,22 +12,17 @@ var (
 )
 
 type TarArchive struct {
-	Content *bytes.Buffer
-	Gzipped *bytes.Buffer
+	content *bytes.Buffer
 	w       *tar.Writer
-	z       *gzip.Writer
 	closed  bool
 }
 
 func NewTarArchive() *TarArchive {
 	contentBuffer := new(bytes.Buffer)
-	gzipBuffer := new(bytes.Buffer)
 
 	return &TarArchive{
-		Content: contentBuffer,
-		Gzipped: gzipBuffer,
+		content: contentBuffer,
 		w:       tar.NewWriter(contentBuffer),
-		z:       gzip.NewWriter(gzipBuffer),
 	}
 }
 
@@ -50,7 +45,7 @@ func (t *TarArchive) AddFile(filename string, body []byte) error {
 	return nil
 }
 
-func (t *TarArchive) Close() error {
+func (t *TarArchive) close() error {
 	if t.closed {
 		return nil
 	}
@@ -58,24 +53,39 @@ func (t *TarArchive) Close() error {
 	return t.w.Close()
 }
 
-func (t *TarArchive) Gzip() error {
+func (t *TarArchive) Data() ([]byte, error) {
 	if t.closed {
-		return ErrArchiveClosed
+		return nil, ErrArchiveClosed
 	}
 
-	err := t.Close()
+	err := t.close()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	_, err = t.z.Write(t.Content.Bytes())
+	return t.content.Bytes(), nil
+}
+
+func (t *TarArchive) Gzip() ([]byte, error) {
+	if t.closed {
+		return nil, ErrArchiveClosed
+	}
+
+	err := t.close()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	if err := t.z.Close(); err != nil {
-		return err
+	gzipBuffer := new(bytes.Buffer)
+	z := gzip.NewWriter(gzipBuffer)
+	_, err = z.Write(t.content.Bytes())
+	if err != nil {
+		return nil, err
 	}
 
-	return nil
+	if err := z.Close(); err != nil {
+		return nil, err
+	}
+
+	return gzipBuffer.Bytes(), nil
 }

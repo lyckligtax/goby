@@ -11,6 +11,7 @@ type ArArchive struct {
 	Content *bytes.Buffer
 	w       *ar.Writer
 	closed  bool
+	err error
 }
 
 func NewArArchive() *ArArchive {
@@ -26,6 +27,10 @@ func NewArArchive() *ArArchive {
 func (a *ArArchive) AddFile(filename string, body []byte) error {
 	if a.closed {
 		return ErrArchiveClosed
+	}
+
+	if a.err != nil {
+		return a.err
 	}
 
 	hdr := ar.Header{
@@ -55,6 +60,11 @@ func (a *ArArchive) Close() error {
 	if a.closed {
 		return nil
 	}
+
+	if a.err != nil {
+		return a.err
+	}
+
 	a.closed = true
 	a.w.Close()
 	return nil
