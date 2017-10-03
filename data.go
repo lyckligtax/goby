@@ -2,8 +2,8 @@ package main
 
 type BinData struct {}
 
-func NewBinData(opt Config) *BinData {
-	return nil
+func NewBinData(config []byte) (*BinData, error) {
+	return nil, nil
 }
 
 func (bd *BinData) Build() *TarArchive {

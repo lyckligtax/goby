@@ -13,9 +13,6 @@ type File struct {
 }
 
 func NewFile(source string, destination string) (*File, error) {
-	if source == "" {
-		return nil, nil
-	}
 	content, err := ioutil.ReadFile(source)
 	if err != nil {
 		return nil, err

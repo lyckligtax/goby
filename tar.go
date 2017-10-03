@@ -53,33 +53,20 @@ func (t *TarArchive) close() error {
 	return t.w.Close()
 }
 
-func (t *TarArchive) Data() ([]byte, error) {
-	if t.closed {
-		return nil, ErrArchiveClosed
-	}
-
-	err := t.close()
-	if err != nil {
-		return nil, err
-	}
-
-	return t.content.Bytes(), nil
-}
-
 func (t *TarArchive) Gzip() ([]byte, error) {
 	if t.closed {
 		return nil, ErrArchiveClosed
 	}
 
-	err := t.close()
-	if err != nil {
+	if err := t.close(); err != nil {
 		return nil, err
 	}
 
 	gzipBuffer := new(bytes.Buffer)
 	z := gzip.NewWriter(gzipBuffer)
-	_, err = z.Write(t.content.Bytes())
-	if err != nil {
+	defer z.Close()
+
+	if _, err := z.Write(t.content.Bytes()); err != nil {
 		return nil, err
 	}
 
