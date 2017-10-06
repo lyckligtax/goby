@@ -23,8 +23,8 @@ func NewFile(source string, destination string) (*File, error) {
 	}
 
 	return &File{
-		Source:      source,
-		Destination: destination,
+		Source:      whiteTrim(source),
+		Destination: whiteTrim(destination),
 		Content:     content,
 		MD5:         md5ToString(content),
 	}, nil

@@ -8,10 +8,11 @@ import (
 )
 
 type ArArchive struct {
-	Content *bytes.Buffer
+	content *bytes.Buffer
 	w       *ar.Writer
-	closed  bool
-	err error
+
+	closed bool
+	err    error
 }
 
 func NewArArchive() *ArArchive {
@@ -19,7 +20,7 @@ func NewArArchive() *ArArchive {
 
 	w, _ := ar.NewWriter(contentBuffer)
 	return &ArArchive{
-		Content: contentBuffer,
+		content: contentBuffer,
 		w:       w,
 	}
 }
@@ -56,16 +57,12 @@ func (a *ArArchive) AddFile(filename string, body []byte) error {
 	return nil
 }
 
-func (a *ArArchive) Close() error {
-	if a.closed {
-		return nil
-	}
-
+func (a *ArArchive) Data() ([]byte, error) {
 	if a.err != nil {
-		return a.err
+		return nil, a.err
 	}
 
 	a.closed = true
 	a.w.Close()
-	return nil
+	return a.content.Bytes(), nil
 }

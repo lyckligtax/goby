@@ -3,22 +3,24 @@ package main
 import (
 	"crypto/md5"
 	"encoding/hex"
-	"encoding/json"
-	"io/ioutil"
-	"regexp"
+
+	"strings"
 )
 
-var (
-	isSemanticVersionRxp = regexp.MustCompile(`^\d+\.\d+\.\d+$`)
-)
+const whitespaceTrim = " \n\t\r"
 
-func readJSON(filename string, d interface{}) error {
-	configData, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return err
+func whiteTrim(s string) string {
+	return strings.Trim(s, whitespaceTrim)
+}
+
+func multiWhiteTrim(s []string) []string {
+	trimmed := []string{}
+	for _, cur := range s {
+		if curT := whiteTrim(cur); curT != "" {
+			trimmed = append(trimmed, curT)
+		}
 	}
-
-	return json.Unmarshal(configData, d)
+	return trimmed
 }
 
 func md5ToString(c []byte) string {
