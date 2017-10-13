@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
-	"strings"
+	"errors"
 )
 
 // Goby resembles the content of a deb-package as found on Ubuntu or Debian derivates
@@ -121,7 +121,6 @@ func (g *Goby) Make(filePath string) error {
 	return nil
 }
 
-// TODO:  strings.Split(command, " ") does not generate valid arguments as it might split "a b" in half
 func (g *Goby) run(command string) error {
 	if g.err != nil {
 		return g.err
@@ -132,9 +131,16 @@ func (g *Goby) run(command string) error {
 		return nil
 	}
 
-	parts := strings.Split(command, " ")
-
-	cmd := exec.Command(parts[0], parts[1:]...)
+	
+	shell, err := exec.LookPath("bash")
+	if err != nil {
+		shell, err = exec.LookPath("sh")
+		if err != nil {
+			return errors.New("Neither bash nor sh found to execute: " + command)
+		}
+	}
+	
+	cmd := exec.Command(shell,"-c", command)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
