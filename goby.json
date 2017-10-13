@@ -1,9 +1,9 @@
 {
-    "preGoby": "go build -ldflags \"-s -w\" -o goby .",
-    "postGoby": "",
+    "preGoby": "go build -o goby .",
+    "postGoby": "rm goby",
     "outputFile": "",
     "dataFiles": {
-        "/bin/goby": "goby"
+        "/usr/bin/goby": "goby"
     },
     "package": "goby",
     "version": "0.1.0",
