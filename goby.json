@@ -6,13 +6,15 @@
         "/usr/bin/goby": "goby"
     },
     "package": "goby",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "maintainer": "Tobias Subklewe <tobias@lyckligtax.com>",
     "architecture": "all",
     "synopsis": "Simple BinaryDeb Builder",
     "description": "Build dpkg/apt installable deb packages through a json config\nRuns {pre,post}Goby commands before and after building the package",
     "dependencies": {
-        "depends": [],
+        "depends": [
+            "bash | sh"
+        ],
         "recommends": [
             "aptly (>= 1.0)"
         ],
@@ -30,8 +32,6 @@
     "postInst": "",
     "postRm": "",
     "config": "",
-    "confFiles": [
-        "/etc/goby/goby.config"
-    ],
+    "confFiles": [],
     "shLibs": []
 }

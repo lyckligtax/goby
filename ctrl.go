@@ -249,7 +249,7 @@ func (bc *Ctrl) buildControlFile(data *Data) error {
 	
 	f := &File{
 		Destination: "control",
-		Content:     []byte(strings.Join(content, "\n")),
+		Content:     []byte(strings.Join(content, "\n") + "\n"),
 	}
 	
 	bc.Files = append(bc.Files, f)
