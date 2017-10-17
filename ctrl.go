@@ -105,7 +105,7 @@ func (bc *Ctrl) checkScriptFiles() error {
 	
 	files := map[string]string{
 		"preinst":  bc.PreInst,
-		"postinst": bc.PreInst,
+		"postinst": bc.PostInst,
 		"prerm":    bc.PreRm,
 		"postrm":   bc.PostRm,
 		"config":   bc.Config,
