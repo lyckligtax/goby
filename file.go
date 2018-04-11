@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"io/ioutil"
+	"path"
 )
 
 type File struct {
@@ -13,16 +14,16 @@ type File struct {
 }
 
 func NewFile(source string, destination string) (*File, error) {
-	if source == "" {
-		return nil, nil
-	}
+	source = path.Clean(whiteTrim(source))
+	destination = path.Clean(whiteTrim(destination))
+	
 	content, err := ioutil.ReadFile(source)
 	if err != nil {
 		return nil, err
 	}
 
-	if content == nil || len(content) == 0 {
-		return nil, errors.New("no content read")
+	if content == nil {
+		return nil, errors.New("no content read: " + source + " -> " + destination)
 	}
 
 	return &File{
